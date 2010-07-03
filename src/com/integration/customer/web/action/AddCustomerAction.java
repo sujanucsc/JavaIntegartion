@@ -29,7 +29,6 @@ public class AddCustomerAction extends ActionSupport {
 
         CustomerForm customerForm = (CustomerForm) actionForm;
         Customer customer = new Customer();
-
         customer.setAddress(customerForm.getAddress());
         customer.setName(customerForm.getName());
 

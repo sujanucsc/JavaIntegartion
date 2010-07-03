@@ -4,12 +4,34 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="customerService" class="com.integration.customer.service.impl.CustomerServiceImpl">
+    <bean id="customerServiceTarget" class="com.integration.customer.service.impl.CustomerServiceImpl">
         <property name="customerDao" ref="customerDao"></property>
     </bean>
 
     <bean id="customerDao" class="com.integration.customer.dao.impl.HibernateCustomerDao">
         <property name="sessionFactory" ref="sessionFactory"></property>
     </bean>
+
+    <bean id="customerAdvice" class="com.integration.customer.service.impl.CustomerServiceAdviceImpl"/>
+
+    <bean id="addPointCut"
+        class="org.springframework.aop.support.JdkRegexpMethodPointcut">
+      <property name="pattern" value=".*addCustomer" />
+    </bean>
+
+    <bean id="customerAdvisor"
+        class="org.springframework.aop.support.DefaultPointcutAdvisor">
+      <property name="advice" ref="customerAdvice" />
+      <property name="pointcut" ref="addPointCut" />
+    </bean>
+
+    
+    <bean id="customerService"
+        class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="target" ref="customerServiceTarget" />
+      <property name="interceptorNames" value="customerAdvisor" />
+      <property name="proxyInterfaces" value="com.integration.customer.service.CustomerService"/>
+    </bean>
+
 
 </beans>
